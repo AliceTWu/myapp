@@ -7,11 +7,11 @@ import dtime from 'time-formater'
 
 class Users {
 	constructor(){
-
+		//this.login = this.login.bind(this)
 	}
-	async login(req, res, next){
+	login(req, res, next){console.log(9)
 		const form = new formidable.IncomingForm();
-		form.parse(req, async (err, fields, files) => {
+		form.parse(req, (err, fields, files) => {
 			if (err) {
 				res.send({
 					status: 0,
@@ -36,55 +36,13 @@ class Users {
 				})
 				return
 			}
-			const newpassword = this.encryption(password);
-			try{
-				const admin = await AdminModel.findOne({user_name})
-				if (!admin) {
-					const adminTip = status == 1 ? '管理员' : '超级管理员'
-					const admin_id = await this.getId('admin_id');
-					const cityInfo = await this.guessPosition(req);
-					const newAdmin = {
-						user_name, 
-						password: newpassword, 
-						id: admin_id,
-						create_time: dtime().format('YYYY-MM-DD HH:mm'),
-						admin: adminTip,
-						status,
-						city: cityInfo.city
-					}
-					await AdminModel.create(newAdmin)
-					req.session.admin_id = admin_id;
-					res.send({
-						status: 1,
-						success: '注册管理员成功',
-					})
-				}else if(newpassword.toString() != admin.password.toString()){
-					console.log('管理员登录密码错误');
-					res.send({
-						status: 0,
-						type: 'ERROR_PASSWORD',
-						message: '该用户已存在，密码输入错误',
-					})
-				}else{
-					req.session.admin_id = admin.id;
-					res.send({
-						status: 1,
-						success: '登录成功'
-					})
-				}
-			}catch(err){
-				console.log('登录管理员失败', err);
-				res.send({
-					status: 0,
-					type: 'LOGIN_ADMIN_FAILED',
-					message: '登录管理员失败',
-				})
-			}
+			//const newpassword = this.encryption(password);
+			
 		})
 	}
-	async register(req, res, next){
+	/*register(req, res, next){
 		const form = new formidable.IncomingForm();
-		form.parse(req, async (err, fields, files) => {
+		form.parse(req, (err, fields, files) => {
 			if (err) {
 				res.send({
 					status: 0,
@@ -110,7 +68,7 @@ class Users {
 				return
 			}
 			try{
-				const admin = await AdminModel.findOne({user_name})
+				const admin = UsersModel.findOne({user_name})
 				if (admin) {
 					console.log('该用户已经存在');
 					res.send({
@@ -120,7 +78,7 @@ class Users {
 					})
 				}else{
 					const adminTip = status == 1 ? '管理员' : '超级管理员'
-					const admin_id = await this.getId('admin_id');
+					const admin_id = this.getId('admin_id');
 					const newpassword = this.encryption(password);
 					const newAdmin = {
 						user_name, 
@@ -130,7 +88,7 @@ class Users {
 						admin: adminTip,
 						status,
 					}
-					await AdminModel.create(newAdmin)
+					UsersModel.create(newAdmin)
 					req.session.admin_id = admin_id;
 					res.send({
 						status: 1,
@@ -154,8 +112,8 @@ class Users {
 	Md5(password){
 		const md5 = crypto.createHash('md5');
 		return md5.update(password).digest('base64');
-	}
-	async singout(req, res, next){
+	}*/
+	/*sasync singout(req, res, next){
 		try{
 			delete req.session.admin_id;
 			res.send({
@@ -169,7 +127,7 @@ class Users {
 				message: '退出失败'
 			})
 		}
-	}
+	}*/
 }
 
 export default new Users()

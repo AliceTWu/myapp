@@ -15,7 +15,7 @@ const usersSchema = new Schema({
 	city: String,
 })
 
-adminSchema.index({id: 1});
+usersSchema.index({id: 1});
 
 const Users = mongoose.model('Users', usersSchema);
 
