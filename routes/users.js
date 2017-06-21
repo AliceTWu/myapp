@@ -2,9 +2,13 @@
 
 import express from 'express';
 import Users from '../controller/users/users.js';
-const router = express();
+let router = express.Router();
+try{console.log(3)
+	router.get('/getUserInfo', Users.getUserInfo);
+}catch(err){
+	console.log("错误："+err)
+}
 
-router.post('/login', Users.login);
-//router.post('/register', Users.register);
+/*console.log(Users.getUserInfo)*/
 
-export default router
+export default router;

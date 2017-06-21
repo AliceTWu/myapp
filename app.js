@@ -1,4 +1,7 @@
 import express from "express";
+import db from "./mongodb/db";
+import config from "./config/default";
+import router from './routes/index.js'; 
 import path from "path";
 import http from "http";
 import favicon from "static-favicon";
@@ -7,10 +10,7 @@ import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import session from 'express-session';
 import connectMongo from "connect-mongo";
-import config from "./config/default";
-import db from "./mongodb/db";
 import history from 'connect-history-api-fallback';
-import router from './routes/index.js';
 
 var users = require('./routes/users');
 
@@ -21,9 +21,9 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use(favicon());
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
+/*app.use(logger('dev'));*/
+/*app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());*/
 app.use(cookieParser());
 /*app.use(express.static(path.join(__dirname, 'public')));
 app.use(app.router);*/
@@ -53,16 +53,13 @@ app.use(session({
         url: config.url
     })
 }))
-/*app.get('/', routes.index);
-app.get('/users', users);*/
-app.post('/users', users.login);
 
 /// catch 404 and forwarding to error handler
-app.use(function(req, res, next) {
+/*app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
-});
+});*/
 
 /// error handlers
 
@@ -85,7 +82,7 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
+console.log(1)
 router(app);
  
 app.use(history());
