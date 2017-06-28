@@ -5,14 +5,12 @@ import mongoose from 'mongoose'
 const Schema = mongoose.Schema;
 
 const usersSchema = new Schema({
-	name: String,
+	id: Number,
 	password: String,
-	type: String,
-	user_id: String
-})
+	idstr: String,
+	screen_name: String
+}) 
 
-//usersSchema.index({id: 1});
-console.log(4)
 const Users = mongoose.model('Users', usersSchema);
 
 

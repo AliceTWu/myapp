@@ -1,6 +1,6 @@
 module.exports = {
 	port: 8003,
-	url: 'mongodb://localhost:27017/myapp',
+	url: 'mongodb://localhost:27017/sina',
 	session: {
 		name: 'SID',
 		secret: 'SID',

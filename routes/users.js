@@ -3,12 +3,12 @@
 import express from 'express';
 import Users from '../controller/users/users.js';
 let router = express.Router();
-try{console.log(3)
+try{
 	router.get('/getUserInfo', Users.getUserInfo);
+	router.post('/signup', Users.signup);
+	router.get('/test', Users.toString);
 }catch(err){
 	console.log("错误："+err)
 }
-
-/*console.log(Users.getUserInfo)*/
 
 export default router;
