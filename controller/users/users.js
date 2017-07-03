@@ -52,7 +52,7 @@ class Users extends BaseComponent{
 				})
 				return
 			}
-			try{console.log(this.encryption(fields.password))
+			try{console.log(this.encryption(fields.password)+":15");
 				//const user_id = await this.getId('user_id');
 				//console.log(this.encryption(fields.password));
 				//const users = {idstr: fields.username, screen_name: fields.screen_name, password: ""};
@@ -69,6 +69,33 @@ class Users extends BaseComponent{
 	Md5(password){
 		const md5 = crypto.createHash('md5');
 		return md5.update(password).digest('base64');
+	}
+	async checkform(req, res, next){
+		const form = new formidable.IncomingForm();
+		form.parse(req, async (err, fields, files) => {
+			try{
+				const user = await checkIsRepeat(fields.type, fields.value);
+				res.send({
+					status: 1,
+					data: user,
+					message: '获取信息成功'
+				})
+			}catch(err){
+				res.send({
+					status: 0,
+					data: null,
+					message: '获取信息失败'
+				})
+			}
+		})
+	}
+	async checkIsRepeat(type, value){console.log(type)
+		try{
+			const user = await UsersModel.findOne({value}, 'idstr');
+			return user
+		}catch(err){
+			console.log(err)
+		}
 	}
 }
 

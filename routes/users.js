@@ -6,7 +6,7 @@ let router = express.Router();
 try{
 	router.get('/getUserInfo', Users.getUserInfo);
 	router.post('/signup', Users.signup);
-	router.get('/test', Users.toString);
+	router.post('/checkform', Users.checkform); 
 }catch(err){
 	console.log("错误："+err)
 }

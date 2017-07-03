@@ -82,7 +82,7 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-console.log(1)
+
 router(app);
  
 app.use(history());
