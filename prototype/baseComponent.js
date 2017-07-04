@@ -1,8 +1,10 @@
-/*import fetch from 'node-fetch';*/
+import fetch from 'node-fetch';
 import Ids from '../models/ids'
 import formidable from 'formidable'
 import fs from 'fs'
 import path from 'path'
+/*qiniu.conf.ACCESS_KEY = 'Ep714TDrVhrhZzV2VJJxDYgGHBAX-KmU1xV1SQdS';
+qiniu.conf.SECRET_KEY = 'XNIW2dNffPBdaAhvm9dadBlJ-H6yyCTIJLxNM_N6';*/
 
 
 export default class BaseComponent {
