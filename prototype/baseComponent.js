@@ -11,7 +11,7 @@ export default class BaseComponent {
 	constructor(){
 		this.idList = ['user_id'];
 	}
-	/*async fetch(url = '', data = {}, type = 'GET', resType = 'JSON'){
+	async fetch(url = '', data = {}, type = 'GET', resType = 'JSON'){
 		type = type.toUpperCase();
 		resType = resType.toUpperCase();
 		if (type == 'GET') {
@@ -52,7 +52,7 @@ export default class BaseComponent {
 			throw new Error(err)
 		}
 		return responseJson
-	}*/
+	}
 	//获取id列表
 	async getId(type){
 		if (!this.idList.includes(type)) {

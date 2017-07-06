@@ -12,7 +12,7 @@ import session from 'express-session';
 import connectMongo from "connect-mongo";
 import history from 'connect-history-api-fallback';
 
-var users = require('./routes/users');
+
 
 var app = express();
 

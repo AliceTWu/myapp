@@ -1,8 +1,7 @@
 'use strict';
 
-import users from './users'
-//import v1 from './v1'
+import v2 from './v2'
 
 export default app => {
-	app.use('/users', users);
+	app.use('/2', v2);
 } 

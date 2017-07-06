@@ -6,7 +6,6 @@ const Schema = mongoose.Schema;
 
 const userInfoSchema = new Schema({
 	id: Number,
-	idstr: String,
 	screen_name: String,
 	name: {type: String, default: ''},
 	province: Number,
@@ -33,7 +32,8 @@ const userInfoSchema = new Schema({
 	avatar_hd: {type: String, default: 'default.jpg'},
 	verified_reason: {type: String, default: ''},
 	online_status: {type: Number, default: 0},
-	bi_followers_count: {type: Number, default: 0}
+	bi_followers_count: {type: Number, default: 0},
+	register_time: {type: String, default: ''}
 }) 
 
 userInfoSchema.index({id: 1});
