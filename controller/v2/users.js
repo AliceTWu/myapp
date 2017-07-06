@@ -12,6 +12,7 @@ class Users extends AddressComponent{
 	constructor(){
 		super();
 		this.signup = this.signup.bind(this);
+		this.signin = this.signin.bind(this);
 		this.getUserInfo = this.getUserInfo.bind(this);
 		this.encryption = this.encryption.bind(this);
 		this.checkform = this.checkform.bind(this);
@@ -125,7 +126,7 @@ class Users extends AddressComponent{
 		}
 	}
 	async signup(req, res, next) {
-		const form = new formidable.IncomingForm();
+		/*const form = new formidable.IncomingForm();
 		form.parse(req, async (err, fields, files) => {
 			if (err) {
 				res.send({
@@ -135,8 +136,8 @@ class Users extends AddressComponent{
 				})
 				return
 			}
-			const user = {}
-		})
+			
+		})*/
 	}
 }
 
