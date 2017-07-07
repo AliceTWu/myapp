@@ -19,9 +19,7 @@ class Users extends AddressComponent{
 	}
 	async getUserInfo(req, res, next){
 		try{
-			let string = {name:"wwt"};
 			
-			/*const userInfo = await UsersModel.findOne({'wwt'})*/
 		}catch(err){
 			console.log('查找失败', err)
 			res.send({
@@ -43,8 +41,15 @@ class Users extends AddressComponent{
 				return
 			};
 			try{
+				if(!fields.username || !fields.password || !fields.nickname || !fields.province || !fields.city) {
+					res.send({
+						status: 0,
+						type: 'FORM_DATA_ERROR',
+						message: '表单信息不能为空'
+					})
+					return
+				}
 				const isRepeat = await UsersModel.findOne({idstr: fields.username});
-				console.log(isRepeat);
 				if(isRepeat !== null){
 					res.send({
 						status: 0,
@@ -69,7 +74,7 @@ class Users extends AddressComponent{
 				UsersModel.create(newUser);
 				const createUser = new UserInfoModel(newUserInfo);
 				const userinfo = await createUser.save();
-				req.session.user_id = user_id;
+				
 				res.send({
 					status: 1,
 					user: userinfo,
@@ -100,13 +105,33 @@ class Users extends AddressComponent{
 				return
 			};
 			try{
+				if(!fields.type || !fields.value) {
+					res.send({
+						status: 0,
+						type: 'FORM_DATA_ERROR',
+						message: '表单信息不完整'
+					})
+				}
 				const user = await this.checkIsRepeat(fields.type, fields.value);
-				res.send({
-					status: 1,
-					data: user,
-					message: '获取信息成功'
-				})
-			}catch(err){console.log(err)
+				let message = ''
+				if (user == null) {
+					res.send({
+						status: 1,
+						type: '',
+						message: '未重复'
+					})
+				} else {
+					switch(fields.type) {
+						case 'username':
+							message = '该邮箱已注册，请重新填写';break;
+					}
+					res.send({
+						status: 0,
+						data: null,
+						message: message
+					})
+				}	
+			}catch(err){
 				res.send({
 					status: 0,
 					data: null,
@@ -117,16 +142,21 @@ class Users extends AddressComponent{
 	}
 	async checkIsRepeat(type, value){
 		try{
-			const data = {};
-			data[type]=value;
-			const user = await UserInfoModel.findOne(data);
+			let data = {};
+			let user = {}
+			if (type == 'username') {
+				user = await UsersModel.findOne({idstr: value});
+			} else {
+				data[type]=value;
+				user = await UserInfoModel.findOne(data);
+			}
 			return user
 		}catch(err){
 			console.log(err)
 		}
 	}
 	async signup(req, res, next) {
-		/*const form = new formidable.IncomingForm();
+		const form = new formidable.IncomingForm();
 		form.parse(req, async (err, fields, files) => {
 			if (err) {
 				res.send({
@@ -136,8 +166,63 @@ class Users extends AddressComponent{
 				})
 				return
 			}
-			
-		})*/
+			try{
+				if(fields.username =='') {
+					res.send({
+						status: 0,
+						type: 'FORM_DATA_ERROR',
+						message: '用户名或密码不能为空'
+					})
+				} else {
+					const user = await UsersModel.findOne({idstr:fields.username});
+					if (user == null) {
+						res.send({
+							status: 0,
+							type: '',
+							message: '用户不存在'
+						})
+					} else{
+						if(user.password !== (this.encryption(fields.password))){
+							res.send({
+								status: 0,
+								type: '',
+								message: '密码错误，请重新输入密码'
+							})
+						} else {
+							const userInfo = await UserInfoModel.findOne({id:user.id});
+							req.session.user_id = user.id;
+							res.send({
+								status: 1,
+								data: userInfo,
+								message: '登录成功'
+							})
+						}
+					}
+					
+				}
+			}catch(err){
+				res.send({
+					status: 0,
+					data: null,
+					message: '获取信息失败'
+				})
+			}
+		})
+	}
+	async signout(req, res, next) {
+		try{
+			delete req.session.user_id;
+			req.send({
+				code:'1',
+				success: '退出成功'
+			})
+		}catch(err){
+			console.log(err);
+			req.send({
+				code:'0',
+				message: '服务器异常，退出失败'
+			})
+		}
 	}
 }
 

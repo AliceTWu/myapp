@@ -27,6 +27,7 @@ app.use(bodyParser.urlencoded());*/
 app.use(cookieParser());
 /*app.use(express.static(path.join(__dirname, 'public')));
 app.use(app.router);*/
+app.use(bodyParser({uploadDir:'./uploads'}));
 
 app.all('*', (req, res, next) => {
     res.header("Access-Control-Allow-Origin", req.headers.origin);

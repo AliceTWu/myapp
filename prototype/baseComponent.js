@@ -9,7 +9,7 @@ qiniu.conf.SECRET_KEY = 'XNIW2dNffPBdaAhvm9dadBlJ-H6yyCTIJLxNM_N6';*/
 
 export default class BaseComponent {
 	constructor(){
-		this.idList = ['user_id'];
+		this.idList = ['user_id', 'file_id', 'status_id'];
 	}
 	async fetch(url = '', data = {}, type = 'GET', resType = 'JSON'){
 		type = type.toUpperCase();
@@ -61,7 +61,6 @@ export default class BaseComponent {
 			return
 		}
 		try{
-			/*let idData ={};*/
 		  const idData = await Ids.findOne();
 			idData[type] ++ ;
 			await idData.save();
