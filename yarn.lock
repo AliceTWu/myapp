@@ -1741,6 +1741,10 @@ node-fetch@^1.7.1:
     encoding "^0.1.11"
     is-stream "^1.0.1"
 
+node-images@^2.2.1:
+  version "2.2.1"
+  resolved "http://registry.npm.taobao.org/node-images/download/node-images-2.2.1.tgz#0decfa905692f43a3fa47156124b80f31c8f7fa5"
+
 node-pre-gyp@^0.6.36:
   version "0.6.36"
   resolved "http://registry.npm.taobao.org/node-pre-gyp/download/node-pre-gyp-0.6.36.tgz#db604112cb74e0d477554e9b505b17abddfab786"

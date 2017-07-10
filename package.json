@@ -30,6 +30,7 @@
     "mongoose": "^4.10.6",
     "morgan": "~1.0.0",
     "node-fetch": "^1.7.1",
+    "node-images": "^2.2.1",
     "static-favicon": "~1.0.0",
     "time-formater": "^1.0.1",
     "transform-runtime": "^0.0.0",

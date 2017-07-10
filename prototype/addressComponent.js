@@ -12,6 +12,7 @@ class AddressComponent extends BaseComponent {
 		this.tencentkey2 = 'RRXBZ-WC6KF-ZQSJT-N2QU7-T5QIT-6KF5X';
 		this.baidukey = 'fjke3YUipM9N64GdOIh1DNeK2APO2WcT';
 		this.baidukey2 = 'fjke3YUipM9N64GdOIh1DNeK2APO2WcT';
+		this.guessPosition = this.guessPosition.bind(this);
 	}
 	//获取定位地址
 	async guessPosition(req){
@@ -21,7 +22,7 @@ class AddressComponent extends BaseComponent {
 	 		req.socket.remoteAddress ||
 	 		req.connection.socket.remoteAddress;
 	 		const ipArr = ip.split(':');
-	 		ip = ipArr[ipArr.length -1];
+	 		ip = ipArr[ipArr.length -1];console.log(ipArr);
 	 		if (process.env.NODE_ENV == 'development') {
 	 			ip = '59.52.251.164';
 	 		}
@@ -38,18 +39,15 @@ class AddressComponent extends BaseComponent {
 			 		})
 		 		}
 		 		if (result.status == 0) {
-		 			/*const cityInfo = {
-		 				lat: result.result.location.lat,
-		 				lng: result.result.location.lng,
-		 				city: result.result.ad_info.city,
-		 			}
-		 			cityInfo.city = cityInfo.city.replace(/市$/, '');*/
 		 			const positionInfo = {
-		 				province: result.result.ad_info.province,
-		 				city: result.result.ad_info.city,
-		 				adcode: result.result.adcode
-		 			}
-		 			resolve(result.result)
+		 				province_name: result.result.ad_info.province,
+		 				city_name: result.result.ad_info.city,
+		 				city: result.result.ad_info.adcode,
+		 				province: '',
+		 				longitude: result.result.location.lng,
+		 				latitude: result.result.location.lat
+		 			};
+		 			resolve(positionInfo)
 		 		}else{
 		 			console.log('定位失败', result)
 		 			reject('定位失败');
