@@ -1,6 +1,6 @@
 'use strict';
  
-import FrendshipModel from '../../models/v2/friendships'
+import FriendshipModel from '../../models/v2/friendships'
 import UserInfoModel from '../../models/v2/userInfo'
 import AddressComponent from '../../prototype/addressComponent'
 import formidable from 'formidable'
@@ -35,7 +35,7 @@ class Frendships extends AddressComponent{
 						res.send({
 							status: 0,
 							type: 'error',
-							message: '关注信息缺失'
+							message: '关注用户信息缺失'
 						})
 						return
 					}
@@ -54,8 +54,30 @@ class Frendships extends AddressComponent{
 									source_id: req.session.user_id,
 									target_id: req.query.id,
 									created_at: dtime().format('YYYY-MM-DD HH:mm:ss')
-								}
-					FrendshipModel.create(friendships)
+								},
+								FrendshipEntity = new FriendshipModel(friendships),
+								FrendshipInfo = await FrendshipEntity.save();
+					const followers = await FriendshipModel.find({target_id: FrendshipInfo.target_id}),//粉丝数
+								friends = await FriendshipModel.find({source_id: FrendshipInfo.source_id}),//关注数
+								target_info = await UserInfoModel.update({id: FrendshipInfo.target_id}, {$set: {'followers_count': followers.length}}),
+								source_info = await UserInfoModel.update({id: FrendshipInfo.source_id}, {$set:{'friends_count': friends.length}});
+					// res.io.on('connection', function(socket) {
+			  //       socket.emit('news', {//传给客户端消息 
+			  //           hello: 'world123456'  
+			  //       });
+			  //       socket.on('my other event', function(data) {//传给服务端消息
+			  //           console.log(data);
+			  //           if(data.my == 1) {
+			  //           	socket.emit('news', {//传给客户端消息 
+					// 	            hello: 'world'+ data.my 
+					// 	        }); 
+			  //           } else {
+			  //           	socket.emit('news', {//传给客户端消息 
+					// 	            hello: '消息错误'
+					// 	        });
+			  //           }
+			  //       });  
+			  //   });  
 					res.send({
 						status: 1,
 						success: 'success',
@@ -75,7 +97,98 @@ class Frendships extends AddressComponent{
 			res.send({
 				code: '0',
 				type: 'error',
-				message: '请登录'
+				message: '异常，请重新尝试'
+			})
+		}
+	}
+	async unfollow(req, res, next) {
+		if(!req.session.user_id){
+			res.send({
+				code: '0',
+				type: 'error',
+				message: '请先登录'
+			})
+		}
+		try{
+			if(!req.query.id){
+				res.send({
+					status: 0,
+					type: 'error',
+					message: '关注用户信息缺失'
+				})
+			}
+			const users = await UserInfoModel.find({id: req.query.id});
+			if(users == null) {
+				res.send({
+					status: 0,
+					type: 'error',
+					message: '该用户不存在'
+				})
+			}
+			const source_id = req.session.user_id, target_id = req.query.id,
+						friendships = {
+							source_id: source_id,
+							target_id: target_id
+						},
+						FrendshipInfo = await FriendshipModel.remove(friendships);
+			const followers = await FriendshipModel.find({target_id: target_id}),//粉丝数
+		 			friends = await FriendshipModel.find({source_id: source_id}),//关注数
+		 			target_info = await UserInfoModel.update({id: target_id}, {$set: {'followers_count': followers.length}}),
+					source_info = await UserInfoModel.update({id: source_id}, {$set:{'friends_count': friends.length}});
+			res.send({
+				status: 1,
+				type: 'success',
+				message: '取消关注成功'
+			})
+		}catch(err){
+			console.log(err)
+			res.send({
+				code: '0',
+				type: 'error',
+				message: '异常，请重新尝试'
+			})
+		}
+	}
+	async friends(req, res, next) {
+		if(!req.session.user_id){
+			res.send({
+				code: '0',
+				type: 'error',
+				message: '请先登录'
+			})
+			return 
+		}
+		try{
+			if(!req.query.uid){
+				res.send({
+					code: '0',
+					type: 'error',
+					message: '信息不完整'
+				})
+				return 
+			}
+			const {count = 5, page = 0} = req.query,
+			      friendships = await FriendshipModel.find({source_id: req.query.uid});
+			if(friendships.length == 0){
+				res.send({
+					code: '1',
+					type: 'success',
+					message: '无关注用户'
+				})
+				return 
+			}
+			let users = [];
+			// friendships.map(f=>{
+			// 	let user = await UserInfoModel.findById(f._id);
+			// 	users.push(user)
+			// })
+			console.log(users)
+		}catch(err){
+			console.log(err)
+			res.send({
+				code: '0',
+				type: 'error',
+				message: '异常，请重新尝试'
 			})
 		}
 	}

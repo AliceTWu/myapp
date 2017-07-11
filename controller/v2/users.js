@@ -49,12 +49,21 @@ class Users extends AddressComponent{
 					})
 					return
 				}
-				const isRepeat = await UsersModel.findOne({idstr: fields.username});
+				const isRepeat = await UsersModel.findOne({idstr: fields.username}),
+							screen_name_is_repeat = await UsersModel.find({screen_name: fields.nickname});
 				if(isRepeat !== null){
 					res.send({
 						status: 0,
 						data: null,
 						message: '该邮箱已注册，请重新填写'
+					});
+					return;
+				}
+				if(screen_name_is_repeat !== null) {
+					res.send({
+						status: 0,
+						data: null,
+						message: '此昵称已被注册'
 					});
 					return;
 				}
@@ -69,7 +78,7 @@ class Users extends AddressComponent{
 					screen_name: fields.nickname, 
 					province: fields.province,
 					city: fields.city,
-					register_time: dtime().format('YYYY-MM-DD HH:mm')
+					register_time: dtime().format('YYYY-MM-DD HH:mm:ss')
 				}
 				UsersModel.create(newUser);
 				const createUser = new UserInfoModel(newUserInfo);

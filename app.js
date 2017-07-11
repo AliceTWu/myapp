@@ -3,7 +3,7 @@ import db from "./mongodb/db";
 import config from "./config/default";
 import router from './routes/index.js'; 
 import path from "path";
-import http from "http";
+// import http from "http";
 import favicon from "static-favicon";
 import logger from "morgan";
 import cookieParser from "cookie-parser";
@@ -12,9 +12,8 @@ import session from 'express-session';
 import connectMongo from "connect-mongo";
 import history from 'connect-history-api-fallback';
 
-
-
 var app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -68,6 +67,7 @@ app.use(session({
 // will print stacktrace
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
+        res.io = io;console.log(io+":appjs");
         res.render('error', {
             message: err.message,
             error: err
@@ -84,7 +84,7 @@ app.use(function(err, req, res, next) {
     });
 });
 
-router(app);
+
  
 app.use(history());
 //app.use(express.static('./public'));
@@ -93,4 +93,17 @@ app.use((err, req, res, next) => {
 });
 
 /*module.exports = app;*/
-app.listen(config.port);
+
+// app.set('port', config.port);
+
+// server.listen(config.port)
+const server = app.listen(config.port, ()=>{
+    console.log('8003')
+});
+const io = require('socket.io')(server);
+app.use(function(req, res, next){  
+  res.io = io;  
+  next();  
+}); 
+router(app);
+ 

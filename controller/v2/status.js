@@ -5,6 +5,7 @@ import dtime from 'time-formater'
 // import images from 'node-images'
 import FileModel from "../../models/status/file";
 import StatusModel from "../../models/v2/status";
+import UserInfoModel from '../../models/v2/userInfo'
 import AddressComponent from '../../prototype/addressComponent'
 import config from "../../config/default";
 const fs = require('fs');
@@ -24,6 +25,7 @@ class Status extends AddressComponent{
 				type: 'error',
 				message: '请先登录'
 			})
+			return
 		}
 		try{
 			const form = new formidable.IncomingForm();
@@ -37,6 +39,7 @@ class Status extends AddressComponent{
 						type: 'error',
 						message: '信息错误'
 					})
+					return
 				}
 				const oldTarget = path.basename(files.file.path);
 				const newTarget = path.basename(files.file.path).split('upload_')[1];
@@ -74,6 +77,7 @@ class Status extends AddressComponent{
 				type: 'error',
 				message: '请先登录'
 			})
+			return
 		}
 		try{
 			const form = new formidable.IncomingForm();
@@ -96,13 +100,20 @@ class Status extends AddressComponent{
 					pic_ids: fields.pic_ids
 				}
 				const statusEntity = new StatusModel(status), statusInfo = await statusEntity.save();
-				res.send({
-					code: 1,
-					data: {
-						statusInfo: statusInfo
-					},
-					message: '微博发布成功'
-				})
+				if(statusInfo) {
+					const statuses_count = await StatusModel.find({user_id: statusInfo.user_id});
+					if(statuses_count){
+						const user = await UserInfoModel.update({id: statusInfo.user_id},{$set:{'statuses_count':statuses_count.length}});
+					};
+					res.send({
+						code: 1,
+						data: {
+							statusInfo: statusInfo
+						},
+						message: '微博发布成功'
+					})
+				}
+				
 			})
 		}catch(err){
 			res.send({
@@ -119,6 +130,7 @@ class Status extends AddressComponent{
 				type: 'error',
 				message: '请先登录'
 			})
+			return
 		}
 		try{
 			req.query.count = req.query.count==undefined?20:req.query.count;
@@ -153,6 +165,7 @@ class Status extends AddressComponent{
 				type: 'error',
 				message: '请先登录'
 			})
+			return
 		}
 		try{
 			if(!req.query.id) {
@@ -161,12 +174,56 @@ class Status extends AddressComponent{
 					type: 'error',
 					message: '缺失微博信息'
 				})
+				return
 			}
 			const dataList = await StatusModel.findOne({idstr: req.query.id});
 			res.send({
 				code: 0,
 				data: dataList,
 				message: '查询成功'
+			})
+		}catch(err){
+			console.log(err)
+			res.send({
+				code: 0,
+				type: 'error',
+				message: '服务器异常'
+			})
+		}
+	}
+	async delete(req, res, next){
+		if(!req.session.user_id) {
+			res.send({
+				code: 0,
+				type: 'error',
+				message: '请先登录'
+			})
+			return
+		}
+		try{
+			const {status_id} = req.params;
+			if(!status_id){
+				res.send({
+					code: 0,
+					type: 'error',
+					message: '缺失微博信息'
+				})
+				return
+			}
+			const statusInfo = await StatusModel.findOne({user_id: req.session.user_id,id: status_id});
+			if(!statusInfo){
+				res.send({
+					code: 0,
+					type: 'error',
+					message: '该微博不存在'
+				})
+				return
+			};
+			await StatusModel.remove({id: statusInfo.id});
+			res.send({
+				code: 1,
+				type: 'success',
+				message: '删除微博成功'
 			})
 		}catch(err){
 			console.log(err)

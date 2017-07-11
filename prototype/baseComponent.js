@@ -9,7 +9,7 @@ qiniu.conf.SECRET_KEY = 'XNIW2dNffPBdaAhvm9dadBlJ-H6yyCTIJLxNM_N6';*/
 
 export default class BaseComponent {
 	constructor(){
-		this.idList = ['user_id', 'file_id', 'status_id', 'friendships_id'];
+		this.idList = ['user_id', 'file_id', 'status_id', 'friendships_id', 'comment_id'];
 	}
 	async fetch(url = '', data = {}, type = 'GET', resType = 'JSON'){
 		type = type.toUpperCase();

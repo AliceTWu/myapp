@@ -18,10 +18,10 @@ const userInfoSchema = new Schema({
 	domain: {type: String, default: ''},
 	weihao: {type: String, default: ''},
 	gender: {type: String, default: 'n'},
-	followers_count: {type: Number, default: 0},
-	friends_count: {type: Number, default: 0},
-	statuses_count: {type: Number, default: 0},
-	favourites_count: {type: Number, default: 0},
+	followers_count: {type: Number, default: 0},//粉丝数
+	friends_count: {type: Number, default: 0},//关注数
+	statuses_count: {type: Number, default: 0},//微博数
+	favourites_count: {type: Number, default: 0},//收藏数
 	created_at: String,
 	allow_all_act_msg: {type: Boolean, default: true},
 	geo_enabled: {type: Boolean, default: true},
