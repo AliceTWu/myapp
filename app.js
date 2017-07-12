@@ -66,8 +66,7 @@ app.use(session({
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
-        res.io = io;console.log(io+":appjs");
+    app.use('*', function(err, req, res, next) {console.log(err)
         res.render('error', {
             message: err.message,
             error: err
@@ -77,7 +76,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
+app.use('*', function(err, req, res, next) {console.log(err)
     res.render('error', {
         message: err.message,
         error: {}
@@ -91,12 +90,9 @@ app.use(history());
 app.use((err, req, res, next) => {
     res.status(404).send('未找到当前路由');
 });
+// router(app);
+// app.listen(config.port);
 
-/*module.exports = app;*/
-
-// app.set('port', config.port);
-
-// server.listen(config.port)
 const server = app.listen(config.port, ()=>{
     console.log('8003')
 });

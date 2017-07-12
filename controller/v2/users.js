@@ -19,7 +19,10 @@ class Users extends AddressComponent{
 	}
 	async getUserInfo(req, res, next){
 		try{
-			
+			res.send({
+				status: 1,
+				message: '查找成功'
+			})
 		}catch(err){
 			console.log('查找失败', err)
 			res.send({

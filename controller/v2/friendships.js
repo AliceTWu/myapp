@@ -2,6 +2,7 @@
  
 import FriendshipModel from '../../models/v2/friendships'
 import UserInfoModel from '../../models/v2/userInfo'
+import StatusModel from "../../models/v2/status";
 import AddressComponent from '../../prototype/addressComponent'
 import formidable from 'formidable'
 import dtime from 'time-formater'
@@ -149,7 +150,7 @@ class Frendships extends AddressComponent{
 			})
 		}
 	}
-	async friends(req, res, next) {
+	async friends(req, res, next) {console.log(789)
 		if(!req.session.user_id){
 			res.send({
 				code: '0',
@@ -176,13 +177,32 @@ class Frendships extends AddressComponent{
 					message: '无关注用户'
 				})
 				return 
+			};
+			let users = [], loadings = [];
+			let load = id=>{
+				return new Promise(async (resolve, reject) => {
+					var user = await UserInfoModel.findOne({id});
+					if(!user){
+						
+					}
+					var status_latest = await StatusModel.find({user_id: id}).sort({created_at:1});
+					user.status = status_latest[0];
+					console.log(user)
+					if(id){
+						resolve(user)
+					}else{
+						reject(error)
+					}
+				});
 			}
-			let users = [];
-			// friendships.map(f=>{
-			// 	let user = await UserInfoModel.findById(f._id);
-			// 	users.push(user)
-			// })
-			console.log(users)
+			loadings = friendships.map((f, i)=>load(f.target_id));
+			Promise.all(loadings).then(results => {
+	      res.send({
+					code: '1',
+					data: results,
+					message: '查询成功'
+				})
+	    });
 		}catch(err){
 			console.log(err)
 			res.send({
