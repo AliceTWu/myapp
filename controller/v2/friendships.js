@@ -150,7 +150,7 @@ class Frendships extends AddressComponent{
 			})
 		}
 	}
-	async friends(req, res, next) {console.log(789)
+	async friends(req, res, next) {
 		if(!req.session.user_id){
 			res.send({
 				code: '0',
@@ -182,14 +182,14 @@ class Frendships extends AddressComponent{
 			let load = id=>{
 				return new Promise(async (resolve, reject) => {
 					var user = await UserInfoModel.findOne({id});
-					if(!user){
-						
-					}
-					var status_latest = await StatusModel.find({user_id: id}).sort({created_at:1});
-					user.status = status_latest[0];
-					console.log(user)
-					if(id){
-						resolve(user)
+					if(user){
+						var status_latest = await StatusModel.findOne({user_id: id}).sort({created_at:-1});
+						user.status = status_latest;
+						if(id){
+							resolve(user)
+						}else{
+							reject(error)
+						}
 					}else{
 						reject(error)
 					}

@@ -13,7 +13,7 @@ import connectMongo from "connect-mongo";
 import history from 'connect-history-api-fallback';
 
 var app = express();
-
+var server = require('http').createServer(app);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -54,12 +54,19 @@ app.use(session({
     })
 }))
 
+const io = require('socket.io')(server);
+app.use(function(req, res, next){  
+  res.io = io;  
+  next();  
+}); 
+router(app);
+
 /// catch 404 and forwarding to error handler
-/*app.use(function(req, res, next) {
+app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
-});*/
+});
 
 /// error handlers
 
@@ -90,16 +97,17 @@ app.use(history());
 app.use((err, req, res, next) => {
     res.status(404).send('未找到当前路由');
 });
+server.listen(config.port);
 // router(app);
 // app.listen(config.port);
 
-const server = app.listen(config.port, ()=>{
-    console.log('8003')
-});
-const io = require('socket.io')(server);
-app.use(function(req, res, next){  
-  res.io = io;  
-  next();  
-}); 
-router(app);
+// const server = app.listen(config.port, ()=>{
+//     console.log('8003')
+// });
+// const io = require('socket.io')(server);
+// app.use(function(req, res, next){  
+//   res.io = io;  
+//   next();  
+// }); 
+// router(app);
  

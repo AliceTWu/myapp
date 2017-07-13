@@ -36,7 +36,8 @@ const statusSchema = new Schema({
 		list_id: {type: String, default: ''}//分组的组号
 	},
 	pic_ids: {type: String, default: ''},//微博配图ID。多图时返回多图ID，用来拼接图片url。用返回字段thumbnail_pic的地址配上该返回字段的图片ID，即可得到多个图片url。
-	ad: {type: String, default: ''}//广告 微博流内的推广微博ID
+	ad: {type: String, default: ''},//广告 微博流内的推广微博ID
+	
 })
 
 const Status= mongoose.model('status', statusSchema);

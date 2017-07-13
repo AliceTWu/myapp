@@ -62,7 +62,7 @@ class Users extends AddressComponent{
 					});
 					return;
 				}
-				if(screen_name_is_repeat !== null) {
+				if(screen_name_is_repeat.length !== 0) {
 					res.send({
 						status: 0,
 						data: null,

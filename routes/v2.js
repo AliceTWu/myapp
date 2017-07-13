@@ -13,12 +13,12 @@ router.post('/users/checkform', Users.checkform);
 
 router.post('/statuses/uploadImage', Status.uploadImage);
 router.post('/statuses/create', Status.create);
-router.get('/statuses/user_timeline.json', Status.user_timeline);
+router.get('/statuses/user_timeline', Status.user_timeline);
 router.get('/statuses/show.json', Status.show);
 router.delete('/statuses/delete/:status_id', Status.delete);
 
 router.post('/friendships/follow', Friendships.follow);
 router.post('/friendships/unfollow', Friendships.unfollow);
-router.get('/friendships/friends.json', Friendships.friends);
+router.get('/friendships/friends', Friendships.friends);
 
 export default router;
