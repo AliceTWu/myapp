@@ -1,5 +1,7 @@
 import fetch from 'node-fetch';
 import Ids from '../models/ids'
+import UserInfoModel from '../models/v2/userInfo'
+import StatusModel from "../models/v2/status";
 import formidable from 'formidable'
 import fs from 'fs'
 import path from 'path'
@@ -69,5 +71,21 @@ export default class BaseComponent {
 			console.log('获取ID数据失败');
 			throw new Error(err)
 		}
+	}
+	loadStatus(id){
+		return new Promise(async (resolve, reject) => {
+							var user = await UserInfoModel.findOne({id});
+							if(user){
+								var status_latest = await StatusModel.findOne({user_id: id}).sort({created_at:-1});
+								user.status = status_latest;
+								if(id){
+									resolve(user)
+								}else{
+									reject(error)
+								}
+							}else{
+								reject(error)
+							}
+						});
 	}
 }

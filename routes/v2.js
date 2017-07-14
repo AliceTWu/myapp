@@ -20,5 +20,6 @@ router.delete('/statuses/delete/:status_id', Status.delete);
 router.post('/friendships/follow', Friendships.follow);
 router.post('/friendships/unfollow', Friendships.unfollow);
 router.get('/friendships/friends', Friendships.friends);
+router.get('/friendships/followers', Friendships.followers);
 
 export default router;

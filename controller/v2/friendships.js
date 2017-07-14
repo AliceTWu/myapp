@@ -11,6 +11,8 @@ class Frendships extends AddressComponent{
 	constructor() {
 		super();
 		this.follow = this.follow.bind(this);
+		this.followers = this.followers.bind(this);
+		this.friends = this.friends.bind(this);
 	}
 	async follow(req, res, next) {
 		if(!req.session.user_id){
@@ -168,38 +170,18 @@ class Frendships extends AddressComponent{
 				})
 				return 
 			}
-			const {count = 5, page = 0} = req.query,
-			      friendships = await FriendshipModel.find({source_id: req.query.uid});
-			if(friendships.length == 0){
-				res.send({
-					code: '1',
-					type: 'success',
-					message: '无关注用户'
-				})
-				return 
-			};
-			let users = [], loadings = [];
-			let load = id=>{
-				return new Promise(async (resolve, reject) => {
-					var user = await UserInfoModel.findOne({id});
-					if(user){
-						var status_latest = await StatusModel.findOne({user_id: id}).sort({created_at:-1});
-						user.status = status_latest;
-						if(id){
-							resolve(user)
-						}else{
-							reject(error)
-						}
-					}else{
-						reject(error)
-					}
-				});
-			}
-			loadings = friendships.map((f, i)=>load(f.target_id));
-			Promise.all(loadings).then(results => {
+			const {count = 5, page = 1, source_id = req.query.uid} = req.query,
+			      friendships = await FriendshipModel.find({source_id})
+			      																	 .skip((page-1)*parseInt(count))
+																							 .limit(parseInt(count))
+																							 .sort({created_at: 1}),
+						total_number = (await FriendshipModel.find({source_id})).length;
+			let loadings = [], _this = this;
+			loadings = friendships.map((f, i)=>_this.loadStatus(f.target_id));
+			Promise.all(loadings).then(users => {
 	      res.send({
 					code: '1',
-					data: results,
+					data: {users, total_number},
 					message: '查询成功'
 				})
 	    });
@@ -212,6 +194,49 @@ class Frendships extends AddressComponent{
 			})
 		}
 	}
+	async followers(req, res, next) {
+		if(!req.session.user_id){
+			res.send({
+				code: '0',
+				type: 'error',
+				message: '请先登录'
+			})
+			return 
+		}
+		try{
+			if(!req.query.uid){
+				res.send({
+					code: '0',
+					type: 'error',
+					message: '信息不完整'
+				})
+				return 
+			}
+			const {count = 5, page = 1, target_id = req.query.uid} = req.query,
+			      friendships = await FriendshipModel.find({target_id})
+												      								 .skip((page-1)*parseInt(count))
+																							 .limit(parseInt(count))
+																							 .sort({created_at: 1}),
+						total_number = (await FriendshipModel.find({target_id})).length;
+			let loadings = [], _this = this;
+			loadings = friendships.map((f, i)=>_this.loadStatus(f.source_id));
+			Promise.all(loadings).then(users => {
+	      res.send({
+					code: '1',
+					data: {users, total_number},
+					message: '查询成功'
+				})
+	    });
+		}catch(err){
+			console.log(err)
+			res.send({
+				code: '0',
+				type: 'error',
+				message: '异常，请重新尝试'
+			})
+		}
+	}
+	
 }
 
 export default new Frendships()

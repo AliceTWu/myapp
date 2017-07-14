@@ -186,7 +186,7 @@ class Users extends AddressComponent{
 						message: '用户名或密码不能为空'
 					})
 				} else {
-					const user = await UsersModel.findOne({idstr:fields.username});
+					const {username, password}=fields, user = await UsersModel.findOne({idstr:username});
 					if (user == null) {
 						res.send({
 							status: 0,
@@ -194,14 +194,15 @@ class Users extends AddressComponent{
 							message: '用户不存在'
 						})
 					} else{
-						if(user.password !== (this.encryption(fields.password))){
+						if(user.password !== (this.encryption(password))){
 							res.send({
 								status: 0,
 								type: '',
 								message: '密码错误，请重新输入密码'
 							})
 						} else {
-							const userInfo = await UserInfoModel.findOne({id:user.id});
+							//const userInfo = await UserInfoModel.findOne({id:user.id});
+							const userInfo = this.loadStatus(user.id);
 							req.session.user_id = user.id;
 							res.send({
 								status: 1,
@@ -210,7 +211,6 @@ class Users extends AddressComponent{
 							})
 						}
 					}
-					
 				}
 			}catch(err){
 				res.send({
