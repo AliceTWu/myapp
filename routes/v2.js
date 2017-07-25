@@ -4,6 +4,7 @@ import express from 'express';
 import Users from '../controller/v2/users';
 import Status from '../controller/v2/status';
 import Friendships from '../controller/v2/friendships';
+import Comments from "../controller/v2/comment";
 let router = express.Router();
 
 router.get('/users/show.json', Users.getUserInfo);
@@ -21,5 +22,7 @@ router.post('/friendships/follow', Friendships.follow);
 router.post('/friendships/unfollow', Friendships.unfollow);
 router.get('/friendships/friends', Friendships.friends);
 router.get('/friendships/followers', Friendships.followers);
+
+router.post('/comment/create.json', Comments.create);
 
 export default router;

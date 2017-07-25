@@ -133,19 +133,35 @@ class Status extends AddressComponent{
 			return
 		}
 		try{
-			req.query.count = req.query.count==undefined?20:req.query.count;
-			req.query.page = req.query.page==undefined?1:req.query.page;
-			const params = {user_id: req.session.user_id},
-						dataList = await StatusModel.find(params)
-														.skip((req.query.page-1)*parseInt(req.query.count))
-														.limit(parseInt(req.query.count))
-														.sort({created_at: 1}),
-						dataTotal = (await StatusModel.find()).length;
+			const {count = 20, page=1} = req.query
+			let user_id = req.session.user_id,
+					statusesList = await StatusModel.find({user_id})
+													.skip((page-1)*parseInt(count))
+													.limit(parseInt(count))
+													.sort({created_at: 1}),
+					total_number = (await StatusModel.find()).length,
+					userInfo = await UserInfoModel.findOne({id: user_id});
+			let  status={}, statuses=[];
+			if(!userInfo || statusesList.length == 0){
+				res.send({
+					request: '/statuses/user_timeline',
+					error_code: '20003',
+					error: 'User does not exists',
+					message: '用户不存在'
+				});
+				return
+			}
+			statusesList.forEach(item=>{
+				status = {...item._doc, user: {...userInfo}._doc};
+				delete status.user_id;
+				statuses.push(status);
+				status = {};
+			}); 
 			res.send({
 				code: 0,
 				data: {
-					rows: dataList,
-					total: dataTotal
+					statuses,
+					total_number
 				},
 				message: '查询成功'
 			})
