@@ -16,6 +16,7 @@ class Users extends AddressComponent{
 		this.getUserInfo = this.getUserInfo.bind(this);
 		this.encryption = this.encryption.bind(this);
 		this.checkform = this.checkform.bind(this);
+		this.getProvinceList = this.getProvinceList.bind(this);
 	}
 	async getUserInfo(req, res, next){
 		try{
@@ -235,6 +236,20 @@ class Users extends AddressComponent{
 				message: '服务器异常，退出失败'
 			})
 		}
+	}
+	async getProvinceList(req, res, next){
+		try{
+			let data = await this.getDistrictList();
+			res.send({
+				data
+			})
+		}catch(err){
+			res.send({
+				status: 0,
+				message: '请求异常'
+			})
+		}
+		
 	}
 }
 

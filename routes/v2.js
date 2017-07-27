@@ -7,6 +7,8 @@ import Friendships from '../controller/v2/friendships';
 import Comments from "../controller/v2/comment";
 let router = express.Router();
 
+router.get('/users/getProvinceList', Users.getProvinceList);
+
 router.get('/users/show.json', Users.getUserInfo);
 router.post('/users/signup', Users.signup);
 router.post('/users/signin', Users.signin);
