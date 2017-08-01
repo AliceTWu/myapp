@@ -45,7 +45,8 @@ class Users extends AddressComponent{
 				return
 			};
 			try{
-				if(!fields.username || !fields.password || !fields.nickname || !fields.province || !fields.city) {
+				let {username, password, nickname, province , city } = fields;
+				if(!fields.username || !fields.password) {
 					res.send({
 						status: 0,
 						type: 'FORM_DATA_ERROR',
@@ -53,8 +54,12 @@ class Users extends AddressComponent{
 					})
 					return
 				}
-				const isRepeat = await UsersModel.findOne({idstr: fields.username}),
-							screen_name_is_repeat = await UsersModel.find({screen_name: fields.nickname});
+				if(nickname == ''){
+					nickname = username
+				}
+				
+				const isRepeat = await UsersModel.findOne({idstr: username}),
+							screen_name_is_repeat = await UsersModel.find({screen_name: nickname});
 				if(isRepeat !== null){
 					res.send({
 						status: 0,
@@ -73,15 +78,15 @@ class Users extends AddressComponent{
 				}
 				const user_id = await this.getId('user_id');
 				const newUser = {
-					idstr: fields.username, 
-					password: this.encryption(fields.password),
+					idstr: username, 
+					password: this.encryption(password),
 					id: user_id
 				};
 				const newUserInfo = {
 					id: user_id,
-					screen_name: fields.nickname, 
-					province: fields.province,
-					city: fields.city,
+					screen_name: nickname, 
+					province: province,
+					city: city,
 					register_time: dtime().format('YYYY-MM-DD HH:mm:ss')
 				}
 				UsersModel.create(newUser);
